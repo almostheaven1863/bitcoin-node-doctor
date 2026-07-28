@@ -3,10 +3,6 @@
 </p>
 
 
-<h1 align="center">
-Bitcoin Node Doctor
-</h1>
-
 <p align="center">
 Diagnose • Protect • Optimize
 </p>
