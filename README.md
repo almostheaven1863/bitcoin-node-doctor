@@ -14,24 +14,23 @@ Diagnose • Protect • Optimize
 ![Platform](https://img.shields.io/badge/Linux-Ubuntu-green)
 
 </p>
-<p align="center">
 
+<p align="center">
 A comprehensive health and diagnostic utility for self-hosted Bitcoin and Lightning nodes.
 
 </p>
+
 ## Contents
 
-- Features
-- Executive Summary
-- Software Updates
-- Bitcoin Core Diagnostics
-- Lightning Diagnostics
-- Docker
-- Services
-- Backups
-- Drive Health
-- Installation
-- License
+- [Features](#features)
+- [Executive Summary](#executive-summary)
+- [Software Updates](#software-update-assistant)
+- [Bitcoin Core Diagnostics](#bitcoin-core-diagnostics)
+- [Lightning Diagnostics](#lightning-diagnostics)
+- [Docker Inspection](#docker-inspection)
+- [Service Monitoring](#service-monitoring)
+- [Backup Verification](#backup-verification)
+- [Storage & Drive Health](#storage--drive-health)
 
 
 
@@ -47,7 +46,16 @@ A comprehensive health and diagnostic utility for self-hosted Bitcoin and Lightn
 - Memory and CPU statistics
 - Beautiful colorized terminal output
 - No external dependencies beyond Python
+---
+## Quick Start
 
+```bash
+git clone https://github.com/almostheaven1863/bitcoin-node-doctor.git
+
+cd bitcoin-node-doctor
+
+./install.sh
+```
 
 ---
 
@@ -113,7 +121,6 @@ Displays filesystem usage and available disk space.
 
 ---
 
-## Installation
 
 ## Installation
 
