@@ -1,38 +1,88 @@
 # Bitcoin Node Doctor
 
-Bitcoin Node Doctor is a health, diagnostics, and update-planning tool for self-hosted Bitcoin and Lightning nodes.
+Bitcoin Node Doctor is an open-source diagnostic utility for self-hosted Bitcoin and Lightning nodes.
 
-## Current capabilities
-
-- Bitcoin Core synchronization and peer checks
-- LND synchronization, graph, peer, channel, and wallet checks
-- LNDg health and database integrity checks
-- systemd service monitoring
-- Docker container status and uptime
-- disk, memory, SMART, connectivity, and NTP checks
-- backup freshness checks
-- Pi-hole health checks
-- software version reporting
-- stable and prerelease update detection
-- dry-run update planning
-- Docker Compose backup and rollback planning
-
-## Supported software
+It performs a comprehensive health check of your node, including:
 
 - Bitcoin Core
 - LND
-- LNDg
-- ThunderHub
-- RTL
-- LNbits
-- Fulcrum
-- Mempool
-- Pi-hole
+- Docker containers
+- Systemd services
+- Software updates
+- Backups
+- Storage utilization
+- General system health
 
-## Usage
+---
 
-Run a full health report:
+## Executive Summary
 
-```bash
-./node-doctor
+![Executive Summary](screenshots/summary.png)
 
+---
+
+## Software Update Assistant
+
+Checks installed software against the latest available releases.
+
+![Software Updates](screenshots/updates.png)
+
+---
+
+## Bitcoin Core Diagnostics
+
+Displays synchronization status, peers, pruning configuration, and blockchain health.
+
+![Bitcoin Core](screenshots/core.png)
+
+---
+
+## Lightning Diagnostics
+
+Displays LND status, balances, channels, and connectivity.
+
+![Lightning](screenshots/lnd.png)
+
+---
+
+## Service Monitoring
+
+Displays the status of important systemd services.
+
+![Services](screenshots/services.png)
+
+---
+
+## Docker Inspection
+
+Shows running containers and Docker health.
+
+![Docker](screenshots/docker.png)
+
+---
+
+## Backup Verification
+
+Verifies backups exist and reports their age.
+
+![Backups](screenshots/backups.png)
+
+---
+
+## Storage & Drive Health
+
+Displays filesystem usage and available disk space.
+
+![Drive Health](screenshots/drive.png)
+
+---
+
+## Installation
+
+Coming soon.
+
+---
+
+## License
+
+MIT License
