@@ -1,4 +1,14 @@
-# Bitcoin Node Doctor
+<p align="center">
+  <img src="assets/ChatGPT Image Jul 28, 2026 at 04_21_45 PM.png" alt="Bitcoin Node Doctor Logo" width="250">
+</p>
+
+<h1 align="center">Bitcoin Node Doctor</h1>
+
+<p align="center">
+  Diagnose • Protect • Optimize
+</p>
+
+---
 
 Bitcoin Node Doctor is an open-source diagnostic utility for self-hosted Bitcoin and Lightning nodes.
 
