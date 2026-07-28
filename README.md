@@ -1,27 +1,57 @@
 <p align="center">
-  <img src="assets/ChatGPT Image Jul 28, 2026 at 04_21_45 PM.png" alt="Bitcoin Node Doctor Logo" width="250">
+  <img src="assets/banner.png" width="100%">
 </p>
 
-<h1 align="center">Bitcoin Node Doctor</h1>
+
+<h1 align="center">
+Bitcoin Node Doctor
+</h1>
 
 <p align="center">
-  Diagnose • Protect • Optimize
+Diagnose • Protect • Optimize
 </p>
+<p align="center">
 
----
+![Release](https://img.shields.io/github/v/release/almostheaven1863/bitcoin-node-doctor)
+![License](https://img.shields.io/github/license/almostheaven1863/bitcoin-node-doctor)
+![Python](https://img.shields.io/badge/Python-3.9+-blue)
+![Platform](https://img.shields.io/badge/Linux-Ubuntu-green)
 
-Bitcoin Node Doctor is an open-source diagnostic utility for self-hosted Bitcoin and Lightning nodes.
+</p>
+<p align="center">
 
-It performs a comprehensive health check of your node, including:
+A comprehensive health and diagnostic utility for self-hosted Bitcoin and Lightning nodes.
 
-- Bitcoin Core
-- LND
-- Docker containers
-- Systemd services
-- Software updates
+</p>
+## Contents
+
+- Features
+- Executive Summary
+- Software Updates
+- Bitcoin Core Diagnostics
+- Lightning Diagnostics
+- Docker
+- Services
 - Backups
+- Drive Health
+- Installation
+- License
+
+
+
+## Features
+
+- Automatic software update detection
+- Bitcoin Core health checks
+- Lightning Network diagnostics
+- Docker container inspection
+- systemd service monitoring
+- Backup verification
 - Storage utilization
-- General system health
+- Memory and CPU statistics
+- Beautiful colorized terminal output
+- No external dependencies beyond Python
+
 
 ---
 
@@ -89,10 +119,64 @@ Displays filesystem usage and available disk space.
 
 ## Installation
 
-Coming soon.
+## Installation
 
+Clone the repository:
+
+```bash
+git clone https://github.com/almostheaven1863/bitcoin-node-doctor.git
+```
+
+Run the installer:
+
+```bash
+cd bitcoin-node-doctor
+
+./install.sh
+```
+
+---
+
+## Supported Software
+
+| Software | Supported |
+|-----------|-----------|
+| Bitcoin Core | ✅ |
+| LND | ✅ |
+| RTL | ✅ |
+| ThunderHub | ✅ |
+| LNbits | ✅ |
+| Fulcrum | ✅ |
+| Mempool | ✅ |
+| Pi-hole | ✅ |
+| Docker | ✅ |
+
+---
+## Philosophy
+
+Bitcoin Node Doctor exists to make running a Bitcoin node easier.
+
+Rather than requiring users to remember dozens of commands, Node Doctor presents the health of an entire Bitcoin stack in one easy-to-read report.
+
+The project favors readability, safety, and minimal dependencies over unnecessary complexity.
+---
+## Roadmap
+
+- [x] Modular architecture
+- [x] Automatic update detection
+- [x] Docker inspection
+- [x] Backup verification
+- [ ] HTML reports
+- [ ] JSON output
+- [ ] Prometheus exporter
+- [ ] Configuration file
 ---
 
 ## License
 
 MIT License
+
+Built for the Bitcoin community.
+<p align="left">
+  <img src="assets/logo.png" width="220">
+</p>
