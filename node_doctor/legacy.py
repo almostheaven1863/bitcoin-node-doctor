@@ -291,7 +291,7 @@ def github_releases(repo):
         f"https://api.github.com/repos/{repo}/releases?per_page=100",
         headers={
             "Accept": "application/vnd.github+json",
-            "User-Agent": "node-doctor/2.4",
+            "User-Agent": "node-doctor/2.4.1",
         },
     )
 
@@ -367,23 +367,73 @@ def docker_compose_dir(container_name):
     return None
 
 
-def systemd_exec_path(service):
+RUNTIME_LAUNCHERS = {
+    "node", "npm", "npx", "yarn", "pnpm",
+    "python", "python3", "uv", "uvicorn",
+    "bash", "sh", "env",
+}
+
+
+def systemd_service_info(service):
+    """Return service executable and working directory without confusing a
+    generic runtime (node/npm/python/uv) with the application it launches.
+    """
     if not service:
         return None
 
     code, output, _ = run(
-        f"systemctl show '{service}' --property=ExecStart --value",
+        (
+            f"systemctl show '{service}' "
+            "--property=ExecStart --property=WorkingDirectory --value"
+        ),
         timeout=10,
     )
     if code != 0 or not output:
         return None
 
-    candidates = re.findall(r"(?:path=)?(/[^ ;}]+)", output)
+    lines = output.splitlines()
+    exec_start = lines[0].strip() if lines else ""
+    working_dir = lines[1].strip() if len(lines) > 1 else ""
+
+    candidates = re.findall(r"(?:path=)?(/[^ ;}]+)", exec_start)
+    executable = None
+    runtime = None
+
     for candidate in candidates:
         path = Path(candidate)
-        if path.exists() and path.is_file():
-            return path
-    return None
+        if not (path.exists() and path.is_file()):
+            continue
+
+        if path.name.lower() in RUNTIME_LAUNCHERS:
+            if runtime is None:
+                runtime = path
+            continue
+
+        executable = path
+        break
+
+    if executable is None:
+        executable = runtime
+
+    work_path = None
+    if working_dir and working_dir not in ("-", "n/a"):
+        candidate = Path(working_dir)
+        if candidate.exists() and candidate.is_dir():
+            work_path = candidate
+
+    return {
+        "executable": executable,
+        "working_directory": work_path,
+        "exec_start": exec_start,
+        "is_runtime": bool(
+            executable and executable.name.lower() in RUNTIME_LAUNCHERS
+        ),
+    }
+
+
+def systemd_exec_path(service):
+    info = systemd_service_info(service)
+    return info["executable"] if info else None
 
 
 def version_from_package_json(path):
@@ -519,31 +569,57 @@ def installed_app(app_key):
 
             return result
 
-    # Last-resort service detection. This catches binaries outside PATH.
-    executable = systemd_exec_path(app.get("service"))
-    if executable:
-        commands = [
-            f"'{executable}' --version",
-            f"'{executable}' -version",
-            f"'{executable}' -v",
-        ]
-        for command in commands:
-            code, stdout, stderr = run(command, timeout=15)
-            version = normalize_version(stdout + "\n" + stderr)
-            if version:
-                return {
-                    "version": version,
-                    "type": "binary",
-                    "source": f"systemd: {executable}",
-                    "path": str(executable),
-                }
+    # Last-resort service detection. Generic launchers such as npm, node,
+    # python, and uv are not the application and must never supply its version.
+    service_info = systemd_service_info(app.get("service"))
+    if service_info:
+        executable = service_info.get("executable")
+        working_dir = service_info.get("working_directory")
+        is_runtime = service_info.get("is_runtime", False)
 
-        return {
-            "version": None,
-            "type": "binary",
-            "source": f"systemd: {executable}",
-            "path": str(executable),
-        }
+        # For runtime-launched services, inspect the application's working
+        # directory instead of running `npm --version`, `node --version`, etc.
+        if is_runtime:
+            version = None
+            if working_dir:
+                version = version_from_package_json(working_dir)
+                if not version and (working_dir / ".git").exists():
+                    version = version_from_git(working_dir)
+
+            source = f"systemd runtime: {executable}"
+            if working_dir:
+                source += f"; app dir: {working_dir}"
+
+            return {
+                "version": version,
+                "type": "git" if working_dir else "service",
+                "source": source,
+                "path": str(working_dir or executable),
+            }
+
+        if executable:
+            commands = [
+                f"'{executable}' --version",
+                f"'{executable}' -version",
+                f"'{executable}' -v",
+            ]
+            for command in commands:
+                code, stdout, stderr = run(command, timeout=15)
+                version = normalize_version(stdout + "\n" + stderr)
+                if version:
+                    return {
+                        "version": version,
+                        "type": "binary",
+                        "source": f"systemd: {executable}",
+                        "path": str(executable),
+                    }
+
+            return {
+                "version": None,
+                "type": "binary",
+                "source": f"systemd: {executable}",
+                "path": str(executable),
+            }
 
     return None
 
@@ -2135,7 +2211,7 @@ def main():
 
     if args.subcommand == "updates":
         print(color("=" * 60, Colors.BOLD))
-        print(color("BITCOIN NODE DOCTOR v2.4", Colors.BOLD))
+        print(color("BITCOIN NODE DOCTOR v2.4.1", Colors.BOLD))
         print(f"Generated: {datetime.datetime.now().astimezone()}")
         print(color("=" * 60, Colors.BOLD))
         check_application_versions()
@@ -2145,7 +2221,7 @@ def main():
         return update_app(args.application, dry_run=args.dry_run)
 
     print(color("=" * 60, Colors.BOLD))
-    print(color("BITCOIN NODE DOCTOR v2.4", Colors.BOLD))
+    print(color("BITCOIN NODE DOCTOR v2.4.1", Colors.BOLD))
     print(f"Generated: {datetime.datetime.now().astimezone()}")
     print(color("=" * 60, Colors.BOLD))
 
