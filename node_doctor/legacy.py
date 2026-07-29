@@ -1184,16 +1184,76 @@ def check_smart():
 
     print(f"Device: {device}")
 
+    smartctl_path = shutil.which("smartctl") or "/usr/sbin/smartctl"
+
     code, output, error = run(
-        f"sudo -n smartctl -H -A '{device}'",
+        f"sudo -n '{smartctl_path}' -H -A '{device}'",
         timeout=30,
     )
 
     if code != 0 and not output:
-        warned(
-            "SMART data could not be read without a sudo password. "
-            "Run smartctl manually or add a restricted sudoers rule."
+        combined_error = (error or "").lower()
+
+        if (
+            "password is required" in combined_error
+            or "a password is required" in combined_error
+            or "no tty present" in combined_error
+        ):
+            info("SMART requires elevated privileges.")
+            print()
+            print("Automatic SMART monitoring is currently unavailable")
+            print("because sudo requires a password.")
+            print()
+            print("To enable it safely:")
+            print()
+            print("  1. Open a restricted sudoers file:")
+            print()
+            print(
+                "     sudo visudo "
+                "-f /etc/sudoers.d/node-doctor-smartctl"
+            )
+            print()
+            print("  2. Add this line:")
+            print()
+            print(
+                f"     {USER} ALL=(root) NOPASSWD: "
+                f"{smartctl_path}"
+            )
+            print()
+            print("  3. Save the file and verify it:")
+            print()
+            print("     sudo chmod 440 "
+                  "/etc/sudoers.d/node-doctor-smartctl")
+            print("     sudo visudo -c")
+            print()
+            print("  4. Run Node Doctor again:")
+            print()
+            print("     node-doctor")
+            print()
+            print(
+                "Only smartctl will be allowed without a password."
+            )
+
+            COMPONENT_SCORES["Drive Health"] = (0, 0)
+            return
+
+        unsupported_markers = (
+            "unsupported",
+            "unknown usb bridge",
+            "smart support is unavailable",
+            "smart support is: unavailable",
+            "device does not support smart",
+            "unable to detect device type",
         )
+
+        if any(marker in combined_error for marker in unsupported_markers):
+            info("SMART data is unavailable for this storage device.")
+            if error:
+                print(f"Reason: {error}")
+            COMPONENT_SCORES["Drive Health"] = (0, 0)
+            return
+
+        warned("SMART data could not be read.")
         if error:
             print(f"Detail: {error}")
         COMPONENT_SCORES["Drive Health"] = (7, 10)
